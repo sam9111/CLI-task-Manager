@@ -1,22 +1,10 @@
-In This milestone you will be implementing a basic command line program that lets you manage your tasks.
-
-The specification for this pogram is as follows,
-
-## Specification
-
-You are asked to build a command line program that lets you manage your tasks. Each task is associated with a priority, the priority is a number that denotes how important a task is, note that the value of the priority is inversed ( lower the value highest the priority).
-
-1. The incomplete version of the program can found in the file `solve_me.py`
-
-2. Priority can be any integer _greater than_ or _equal to_ 1. 1 being the highest priority
-
-3. Two tasks cannot have the same priority, If a new task is added with an existing priority, the priority of the existing task will be increased by 1.
+In the last milestone, we created a command line application to manage our tasks, although this is really good, it's not very user friendly and it's hard to quickly take a look at our pending tasks, to solve these issues, we will create a tiny server that can render our tasks in a nice way.
 
 ## Usage
 
 ### 1. Help
 
-Executing the command without any arguments, or with a single argument help prints the CLI usage.
+All our existing functionality will be ported over from the last milestone, you can copy over your implementations to the new boilerplate template
 
 ```
 $ python tasks.py help
@@ -27,92 +15,26 @@ $ python tasks.py del PRIORITY_NUMBER  # Delete the incomplete item with the giv
 $ python tasks.py done PRIORITY_NUMBER # Mark the incomplete item with the given priority as complete
 $ python tasks.py help                 # Show usage
 $ python tasks.py report               # Statistics
+$ python tasks.py runserver            # Starts the tasks management server
 ```
 
-### 2. List all pending items
+The runserver command will start the server and it will keep running until we stop it manually using the keyboard combination `ctrl+c`
 
-Use the ls command to see all the items that are not yet complete, in ascending order of priority.
+The boilerplate methods to render the pending and completed tasks are already done so that you can just focusing on rendering html content.
 
-Every item should be printed on a new line. with the following format
+You can style the page however you want as long as the content is present.
 
-```
-[index] [task] [priority]
-```
+The route for pending tasks are : https://localhost:8000/tasks
+The route for completed tasks are : https://localhost:8000/completed
 
-Example:
+The methods to complete are `render_pending_tasks` and `render_completed_tasks` in the `TasksServer` class
 
-```
-$ python tasks.py ls
-1. change light bulb [2]
-2. water the plants [5]
-```
+## For Those who are looking for a challenge!
 
-index starts from 1, this is used to identify a particular task to complete or delete it.
-
-### 3. Add a new item
-
-Use the add command. The text of the task should be enclosed within double quotes (otherwise only the first word is considered as the item text, and the remaining words are treated as different arguments).
-
-```
-$ python tasks.py add 5 "the thing i need to do"
-Added task: "the thing i need to do" with priority 5
-```
-
-### 4. Delete an item
-
-Use the del command to remove an item by its priority.
-
-```
-$ python tasks.py delete 3
-Deleted item with priority 3
-```
-
-Attempting to delete a non-existent item should display an error message.
-
-```
-$ python tasks.py delete 5
-Error: item with priority 5 does not exist. Nothing deleted.
-```
-
-### 5. Mark a task as completed
-
-Use the done command to mark an item as completed by its priority.
-
-```
-$ python tasks.py done 1
-Marked item as done.
-```
-
-Attempting to mark a non-existed item as completed will display an error message.
-
-```
-$ python tasks.py done 5
-Error: no incomplete item with priority 5 exists.
-```
-
-### 6. Generate a report
-
-Show the number of complete and incomplete items in the list. and the complete and incomplete items grouped together.
-
-```
-$ python tasks.py report
-Pending : 2
-1. this is a pending task [1]
-2. this is a pending task with priority [4]
-
-Completed : 3
-1. completed task
-2. another completed task
-3. yet another completed task
-```
+Our server can only render tasks for now, but we have learned how to use html to create forms that can be used to add new tasks.
+If you are looking for a challenge, create a new page that can add new tasks, delete tasks and complete them. Its okay to fail, All the best!
 
 ## Testing
 
 Run the test.py file to test if your submission is correct.
 The test.py file will run your program and compare the output with the expected output. Any errors in your implementation will be displayed.
-
-## Submission
-
-You can find the incomplete code and the instructions to complete it in the following GitHub repository. ( Fork this repo to get started )
-
-https://github.com/DjangoForAll/GDC-Level-2-Milestone
