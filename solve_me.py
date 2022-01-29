@@ -144,12 +144,20 @@ $ python tasks.py runserver # Starts the tasks management server"""
             index += 1
 
     def render_pending_tasks(self):
-        # Complete this method to return all incomplete tasks as HTML
-        return "<h1> Show Incomplete Tasks Here </h1>"
+        self.read_current()
+        html = "<h1>Pending tasks</h1><ol>"
+        for p in sorted(self.current_items.keys()):
+            html = html + f"<li>{self.current_items[p].strip()} [{p}]</li>"
+        html = html + "</ol>"
+        return html
 
     def render_completed_tasks(self):
-        # Complete this method to return all completed tasks as HTML
-        return "<h1> Show Completed Tasks Here </h1>"
+        self.read_completed()
+        html = "<h1>Completed tasks</h1><ol>"
+        for task in self.completed_items:
+            html = html + f"<li>{task.strip()}</li>"
+        html = html + "</ol>"
+        return html
 
 
 class TasksServer(TasksCommand, BaseHTTPRequestHandler):
