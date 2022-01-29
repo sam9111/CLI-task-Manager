@@ -1,9 +1,11 @@
-import io
 import os
+import random
+import string
 import unittest
-import unittest.mock
 
-from solve_me import TasksCommand
+from solve_me import TasksCommand, TasksServer
+
+random_choices = string.ascii_uppercase + string.digits + string.ascii_lowercase
 
 
 def reset_files():
@@ -45,60 +47,43 @@ class SimpleTest(unittest.TestCase):
     def setUp(self):
         self.command_object = TasksCommand()
 
-    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
-    def assert_stdout(self, command, args, expected_output, mock_stdout):
-        if command == "add":
-            self.command_object.add(args)
-        elif command == "done":
-            self.command_object.done(args)
-        elif command == "delete":
-            self.command_object.delete(args)
-        elif command == "ls":
-            self.command_object.ls()
-        elif command == "report":
-            self.command_object.report()
-        elif command == "help":
-            self.command_object.help()
-        self.assertIn(expected_output, mock_stdout.getvalue().strip())
-
     def test_add_tasks(self):
-        self.assert_stdout("add",["5", "Test Task 5"], "Added task: \"Test Task 5\" with priority 5")
+        self.command_object.add(["5", "Test Task 5"])
         tasks = load_tasks_file()
         self.assertEqual(tasks[5], "Test Task 5")
 
     def test_add_same_tasks(self):
-        self.assert_stdout("add",["2", "Task 3"], "Added task: \"Task 3\" with priority 2")
-        self.assert_stdout("add", ["2", "Task 2"], "Added task: \"Task 2\" with priority 2")
+        self.command_object.add(["2", "Task 3"])
+        self.command_object.add(["2", "Task 2"])
         tasks = load_tasks_file()
         self.assertEqual(tasks[3], "Task 3")
 
     def test_add_complete_tasks(self):
-        self.assert_stdout("add", ["10", "Task 10"], "Added task: \"Task 10\" with priority 10")
-        self.assert_stdout("done", ["10"], "Marked item as done.")
+        self.command_object.add(["10", "Task 10"])
+        self.command_object.done(["10"])
         tasks = load_tasks_file()
         self.assertFalse(10 in tasks)
         completed = load_completed_file()
         self.assertTrue("Task 10" in completed)
 
-    def test_complete_nonexisting_tasks(self):
-        self.assert_stdout("done", ["1500"], "Error: no incomplete item with priority 1500 exists.")
-
     def test_delete_tasks(self):
-        self.assert_stdout("add", ["15", "Task 15"], "Added task: \"Task 15\" with priority 15")
-        self.assert_stdout("delete", ["15"], "Deleted item with priority 15")
+        self.command_object.add(["15", "Task 15"])
+        self.command_object.delete(["15"])
         tasks = load_tasks_file()
         self.assertFalse(15 in tasks)
         completed = load_completed_file()
         self.assertFalse("Task 15" in completed)
 
-    def test_delete_nonexisting_tasks(self):
-        self.assert_stdout("delete", ["1500"], "Error: item with priority 1500 does not exist. Nothing deleted.")
+    def test_pending_render(self):
+        task = "".join(random.choices(random_choices, k=20))
+        self.command_object.add(["25", task])
+        self.assertIn(task, self.command_object.render_pending_tasks())
 
-    def test_ls_tasks(self):
-        self.assert_stdout("ls", [], '1. Task 2 [2]\n2. Task 3 [3]\n3. Test Task 5 [5]')
-
-    def test_report(self):
-        self.assert_stdout("report", [], "Pending : 3\n1. Task 2 [2]\n2. Task 3 [3]\n3. Test Task 5 [5]\n\nCompleted : 1\n1. Task 10")
+    def test_completed_render(self):
+        task = "".join(random.choices(random_choices, k=20))
+        self.command_object.add(["35", task])
+        self.command_object.done(["35"])
+        self.assertIn(task, self.command_object.render_completed_tasks())
 
 reset_files()
 unittest.main()
