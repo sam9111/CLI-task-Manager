@@ -76,7 +76,7 @@ $ python tasks.py report # Statistics
 $ python tasks.py runserver # Starts the tasks management server"""
         )
 
-   def add(self, args):
+    def add(self, args):
         priority = int(args[0])
         task = args[1]
 
@@ -142,7 +142,6 @@ $ python tasks.py runserver # Starts the tasks management server"""
         for item in self.completed_items:
             print(f"{index}. {item}")
             index += 1
-            
 
     def render_pending_tasks(self):
         # Complete this method to return all incomplete tasks as HTML
@@ -168,6 +167,3 @@ class TasksServer(TasksCommand, BaseHTTPRequestHandler):
         self.send_header("content-type", "text/html")
         self.end_headers()
         self.wfile.write(content.encode())
-
-
-    
