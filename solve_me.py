@@ -88,7 +88,7 @@ $ python tasks.py report # Statistics"""
                         if key < priority or key > last
                     ]
                 )
-                for i in range(priority, last):
+                for i in range(priority, last + 1):
                     new_current_items[i + 1] = self.current_items[i]
 
                 self.current_items = new_current_items
