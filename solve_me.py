@@ -80,14 +80,33 @@ $ python tasks.py runserver # Starts the tasks management server"""
         priority = int(args[0])
         task = args[1]
 
+        list_keys = sorted(list(self.current_items))
         found = 0
-        for p in self.current_items:
-            if p == priority:
-                found = 1
-                break
+
+        if priority in list_keys:
+            found = 1
+
         if found:
-            self.current_items[p + 1] = self.current_items[p]
-            del self.current_items[p]
+            last = -1
+            i = priority + 1
+            while i in list_keys:
+                last = i
+                i += 1
+            if last == -1:
+                self.current_items[priority + 1] = self.current_items[priority]
+            else:
+                new_current_items = dict(
+                    [
+                        (key, self.current_items[key])
+                        for key in list_keys
+                        if key < priority or key > last
+                    ]
+                )
+                for i in range(priority, last + 1):
+                    new_current_items[i + 1] = self.current_items[i]
+
+                self.current_items = new_current_items
+
         self.current_items[priority] = task
         self.write_current()
         print(f'Added task: "{task}" with priority {priority}')
