@@ -81,12 +81,8 @@ $ python tasks.py runserver # Starts the tasks management server"""
         task = args[1]
 
         list_keys = sorted(list(self.current_items))
-        found = 0
 
         if priority in list_keys:
-            found = 1
-
-        if found:
             last = -1
             i = priority + 1
             while i in list_keys:
@@ -114,27 +110,21 @@ $ python tasks.py runserver # Starts the tasks management server"""
     def done(self, args):
         priority = int(args[0])
 
-        for p in self.current_items:
-            if p == priority:
-                self.completed_items.append(self.current_items[p])
-                self.write_completed()
-                del self.current_items[p]
-                self.write_current()
-                print("Marked item as done.")
-                return
+        if priority in self.current_items:
+            self.completed_items.append(self.current_items[priority])
+            self.write_completed()
+            del self.current_items[priority]
+            self.write_current()
+            print("Marked item as done.")
+            return
 
         print(f"Error: no incomplete item with priority {priority} exists.")
 
     def delete(self, args):
         priority = int(args[0])
 
-        found = 0
-        for p in self.current_items:
-            if p == priority:
-                found = 1
-                break
-        if found:
-            del self.current_items[p]
+        if priority in self.current_items:
+            del self.current_items[priority]
             self.write_current()
             print(f"Deleted item with priority {priority}")
             return
